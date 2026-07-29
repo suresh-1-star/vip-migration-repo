@@ -11,6 +11,7 @@ module "vpc" {
   cidr_block           = var.vpc_cidr
   public_subnet_cidrs  = var.public_subnet_cidrs
   private_subnet_cidrs = var.private_subnet_cidrs
+  availability_zones   = var.availability_zones
   tags                 = var.tags
 }
 
@@ -25,7 +26,7 @@ module "alb" {
   subnet_ids         = module.vpc.public_subnet_ids
   security_group_ids = var.alb_security_group_ids
   certificate_arn    = var.certificate_arn # TSK-401 ACM Certificate
-  target_group_arn   = module.target_group.target_group_arn
+  target_group_arn = module.target_group.arn
   tags               = var.tags
 }
 
@@ -56,7 +57,7 @@ resource "aws_lb_listener_rule" "api_v1_rewrite" {
 
   action {
     type             = "forward"
-    target_group_arn = module.target_group.target_group_arn # C.3 & C.4 Forward to Target Group
+    target_group_arn = module.target_group.arn
   }
 
   # F5 URI Rewrite Transformation is not supported by the current AWS provider ALB listener rule schema.
@@ -85,15 +86,15 @@ module "ecs" {
   task_role_arn      = var.task_role_arn
   subnet_ids         = module.vpc.private_subnet_ids
   security_group_id  = var.ecs_security_group_id
-  target_group_arn   = module.target_group.target_group_arn # Connects ECS service to Target Group
+  target_group_arn = module.target_group.arn
 }
 
 # ------------------------------------------------------------------------------
 # 6. ROUTE 53 MODULE (TSK-201 HYBRID DNS & CUTOVER)
 # ------------------------------------------------------------------------------
 module "route53" {
-  source      = "../../../modules/route53"
-  zone_id     = var.route53_zone_id
-  record_name = var.route53_record_name
-  records     = [var.route53_target]
+  source       = "../../../modules/route53"
+  vpc_id       = module.vpc.vpc_id
+  alb_dns_name = module.alb.alb_dns_name
+  alb_zone_id  = module.alb.alb_zone_id
 }

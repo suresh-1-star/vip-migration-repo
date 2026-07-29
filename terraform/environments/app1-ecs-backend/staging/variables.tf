@@ -22,6 +22,12 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
+variable "availability_zones" {
+  type        = list(string)
+  description = "List of AWS availability zones"
+  default     = ["us-east-1a", "us-east-1b"]
+}
+
 # ------------------------------------------------------------------------------
 # ALB & TARGET GROUP CONFIGURATION
 # ------------------------------------------------------------------------------

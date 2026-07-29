@@ -33,7 +33,7 @@ output "alb_dns_name" {
 
 output "target_group_arn" {
   description = "The ARN of the ECS Target Group (TSK-301 Compliant)"
-  value       = module.target_group.target_group_arn
+  value = module.target_group.arn
 }
 
 # ==============================================================================
@@ -41,6 +41,6 @@ output "target_group_arn" {
 # ==============================================================================
 
 output "route53_fqdn" {
-  description = "The Fully Qualified Domain Name of the Route 53 canary record"
-  value       = module.route53.record_fqdn
+  description = "Main staging cutover FQDN"
+  value       = module.route53.main_cutover_fqdn
 }
