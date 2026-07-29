@@ -15,9 +15,15 @@ output "alb_arn" {
 }
 
 output "target_group_arn" {
-  value = module.target_group.target_group_arn
+  value = module.target_group.arn
 }
 
 output "route53_fqdn" {
-  value = module.route53.record_fqdn
+  description = "Main production cutover FQDN (ecs.emea.fedex.com)"
+  value       = module.route53.main_cutover_fqdn
+}
+
+output "aws_cloud_endpoint_fqdn" {
+  description = "Primary AWS Cloud Endpoint FQDN (ecs.aws.emea.fedex.com)"
+  value       = module.route53.aws_cloud_endpoint_fqdn
 }

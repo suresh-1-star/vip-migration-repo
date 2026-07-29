@@ -74,3 +74,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "availability_zones" {
+  type        = list(string)
+  description = "List of AWS availability zones"
+  default     = ["us-east-1a", "us-east-1b"]
+}
