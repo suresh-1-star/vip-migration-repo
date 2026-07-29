@@ -8,6 +8,7 @@ module "vpc" {
   cidr_block           = var.vpc_cidr
   public_subnet_cidrs  = var.public_subnet_cidrs
   private_subnet_cidrs = var.private_subnet_cidrs
+  availability_zones   = var.availability_zones
   tags                 = var.tags
 }
 
@@ -29,7 +30,7 @@ module "alb" {
   security_group_ids = var.alb_security_group_ids
   tags               = var.tags
 
-  target_group_arn = module.target_group.target_group_arn
+  target_group_arn = module.target_group.arn
   certificate_arn  = var.certificate_arn
 }
 
@@ -46,13 +47,13 @@ module "ecs" {
   task_role_arn      = var.task_role_arn
   subnet_ids         = module.vpc.private_subnet_ids
   security_group_id  = var.ecs_security_group_id
-  target_group_arn   = module.target_group.target_group_arn
+  target_group_arn = module.target_group.arn
 }
 
 # 4. Route53
 module "route53" {
-  source      = "../../../modules/route53"
-  zone_id     = var.route53_zone_id
-  record_name = var.route53_record_name
-  records     = [var.route53_target]
+  source       = "../../../modules/route53"
+  vpc_id       = module.vpc.vpc_id
+  alb_dns_name = module.alb.alb_dns_name
+  alb_zone_id  = module.alb.alb_zone_id
 }

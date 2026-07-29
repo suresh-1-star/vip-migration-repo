@@ -16,9 +16,9 @@ output "alb_arn" {
 
 output "target_group_arn" {
   description = "ARN of the target group"
-  value       = module.target_group.target_group_arn
+  value = module.target_group.arn
 }
 
 output "route53_fqdn" {
-  value = module.route53.record_fqdn
+  value = module.route53.main_cutover_fqdn
 }
